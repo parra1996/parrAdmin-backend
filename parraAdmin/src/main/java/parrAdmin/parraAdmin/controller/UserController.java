@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import parrAdmin.parraAdmin.DTO.ApartmentDTO;
 import parrAdmin.parraAdmin.DTO.LoginDTO;
 import parrAdmin.parraAdmin.Response.LoginResponse;
+import parrAdmin.parraAdmin.Response.RegisterResponse;
 import parrAdmin.parraAdmin.model.Apartment;
 import parrAdmin.parraAdmin.model.User;
 import parrAdmin.parraAdmin.repository.UserRepository;
@@ -38,28 +39,28 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
-	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO login) {
-		LoginResponse response = new LoginResponse() ;
-		
-		try {
-			
-			LoginResponse responseData =service.login(login);
-			response.setMessage(responseData.getMessage());
-			response.setStatus(responseData.getStatus());
-			response.setUser(responseData.getUser());
-			if (responseData.getStatus() == false) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-			}
-			
-			return ResponseEntity.ok(response);
-			
-		} catch (Exception e) {
-			response = new LoginResponse("error",false);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-		
-	}
+//	@PostMapping("/login")
+//	public ResponseEntity<LoginResponse> login(@RequestBody LoginDTO login) {
+//		LoginResponse response = new LoginResponse() ;
+//		
+//		try {
+//			
+//			LoginResponse responseData =service.login(login);
+//			response.setMessage(responseData.getMessage());
+//			response.setStatus(responseData.getStatus());
+//			response.setUser(responseData.getUser());
+//			if (responseData.getStatus() == false) {
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//			}
+//			
+//			return ResponseEntity.ok(response);
+//			
+//		} catch (Exception e) {
+//			response = new LoginResponse("error",false);
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//		}
+//		
+//	}
 	
 	@GetMapping("/{email}")
 	public LoginResponse getByEmail(@PathVariable String email) {
@@ -82,6 +83,33 @@ public class UserController {
 		return response;
 		
 	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<RegisterResponse>  register(@RequestBody User user) {
+
+		RegisterResponse response = new RegisterResponse();
+		
+		try {
+		RegisterResponse register =	service.register(user);
+			System.out.println(register + "REGISTROOOO");
+			response.setMessage(register.getMessage());
+			response.setStatus(register.getStatus());
+			
+			if ( register.getStatus() == false) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+				
+			}
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		} catch (Exception e) {
+			response.setMessage("error al registrar a " + user.getName());
+			response.setStatus(false);
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+		}
+		
+	}
+	
 	
 }
 ;
